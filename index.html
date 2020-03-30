@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Socket.IO chat</title>
+  </head>
+  <body>
+    <ul id="messages"></ul>
+    <form action="" id="chatMessageForm">
+      <input id="m" autocomplete="off" />
+      <button id="submitButton">Send</button>
+    </form>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io();
+      //this loads the sockiet.io client, which exposes a io global (and the endpoint GET /socket.io/socket.io.js)
+      //not specifying any URL when calling io(), since it defaults to trying to connect to the host that serves the page
+      const button = document.querySelector('#submitButton');
+      const input = document.querySelector('#m');
+
+      button.addEventListener('click', event => {
+        event.preventDefault(); //prevents page reloading
+        socket.emit('chat message', input.value);
+        input.value = '';
+      });
+
+      const messages = document.querySelector('#messages');
+
+      socket.on('chat message', msg => {
+        console.log('message received: ' + msg);
+        const newMsg = document.createElement('li');
+        newMsg.innerText = msg;
+        messages.appendChild(newMsg);
+      });
+    </script>
+  </body>
+</html>
